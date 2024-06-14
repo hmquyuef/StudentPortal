@@ -1,0 +1,53 @@
+﻿<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand demo">
+        <a asp-controller="Home" asp-action="Index" class="app-brand-link w-100">
+            <img src="~/images//LogoUEFstudentportal-01.svg" />
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+    </div>
+    <div class="menu-inner-shadow"></div>
+    <ul class="menu-inner py-1 ps ps--active-y" id="loadUrl"></ul>
+    <ul class="menu-inner h-auto mb-2">
+        @{
+            var routeUrl = Url.RouteUrl(ViewContext.RouteData.Values);
+            var qsPath = ViewContext.HttpContext.Request.QueryString.Value;
+            var currentPage = $"{routeUrl}{qsPath}";
+        }
+
+        <!-- Khu vực Quản trị - Chức năng -->
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">khu vực quản trị</span>
+        </li>
+        <li class="menu-item@(currentPage == "/settings" ? " active" : "")">
+            <a href="/settings" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-menu"></i>
+                <div class="text-truncate">Quản lý chức năng</div>
+            </a>
+        </li>
+        <li class="menu-item@(currentPage.StartsWith("/faculities") ? " active open" : "")">
+            <a href="/faculities" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-check-shield"></i>
+                <div class="text-truncate">Khoa - Ngành</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item@(currentPage == "/faculities/faculities" ? " active" : "")">
+                    <a asp-area="Faculities" asp-page="Faculities" class="menu-link">
+                        <div class="text-truncate">Khoa</div>
+                    </a>
+                </li>
+                <li class="menu-item@(currentPage == "/faculities/branches" ? " active" : "")">
+                    <a asp-area="Faculities" asp-page="Branches" class="menu-link">
+                        <div class="text-truncate">Ngành</div>
+                    </a>
+                </li>
+                <li class="menu-item@(currentPage == "/faculities/majors" ? " active" : "")">
+                    <a asp-area="Faculities" asp-page="Majors" class="menu-link">
+                        <div class="text-truncate">Chuyên ngành</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</aside>

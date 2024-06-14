@@ -12,199 +12,31 @@
     <meta name="description" content="UEF Student Portal">
     <meta name="author" content="UEF IT">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Icons -->
-    <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" as="font" />
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" />
     <!-- Core CSS -->
-    <link rel="stylesheet" href="~/assets/vendor/css/core.css" class="template-customizer-core-css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/css/demo.css" type="text/css" />
-    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="~/assets/vendor/css/rtl/core-dark.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="~/assets/vendor/css/rtl/theme-default-dark.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="~/assets/css/demo.css" />
 
-    <link rel="stylesheet" href="~/assets/vendor/libs/typeahead-js/typeahead.css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/vendor/libs/flatpickr/flatpickr.css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/vendor/libs/select2/select2.css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/vendor/libs/quill/editor.css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/vendor/libs/quill/typography.css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/vendor/libs/quill/katex.css" type="text/css" />
-    <link rel="stylesheet" href="~/assets/vendor/libs/toastr/toastr.min.css" type="text/css" />
-    <script src="~/assets/vendor/js/helpers.js"></script>
-    <script src="~/assets/vendor/js/template-customizer.js"></script>
-    <script src="~/assets/js/config.js"></script>
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="~/assets/vendor/libs/typeahead-js/typeahead.css">
     @await RenderSectionAsync("Heads", required: false)
+
+    <!-- Helpers -->
+    <script src="~/assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
+    <script src="~/assets/vendor/js/template-customizer.js"></script>
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="~/assets/js/config.js"></script>
 </head>
 <body>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
-            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-                <div class="app-brand demo">
-                    <a asp-controller="Home" asp-action="Index" class="app-brand-link w-100">
-                        <img src="~/images//LogoUEFstudentportal-01.svg" />
-                    </a>
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
-                    </a>
-                </div>
-                <div class="menu-inner-shadow"></div>
-                <ul class="menu-inner py-1 ps ps--active-y">
-                    @{
-                        var routeUrl = Url.RouteUrl(ViewContext.RouteData.Values);
-                        var qsPath = ViewContext.HttpContext.Request.QueryString.Value;
-                        var currentPage = $"{routeUrl}{qsPath}";
-                    }
-                    
-                    <!-- CTSV -->
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">ctsv</span>
-                    </li>
-                    <li class="menu-item@(currentPage == "/product" ? " active" : "")">
-                        <a href="/product" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-envelope"></i>
-                            <div class="text-truncate">Sản phẩm</div>
-                        </a>
-                    </li>
-                    <li class="menu-item@(currentPage == "/category" ? " active" : "")">
-                        <a href="/category" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-envelope"></i>
-                            <div class="text-truncate">Danh mục</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-food-menu"></i>
-                            <div class="text-truncate">Hóa đơn</div>
-                            <span class="badge badge-center rounded-pill bg-success ms-auto">4</span>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="app-invoice-list.html" class="menu-link">
-                                    <div class="text-truncate" data-i18n="List">List</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="app-invoice-preview.html" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Preview">Preview</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="app-invoice-edit.html" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Edit">Edit</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="app-invoice-add.html" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Add">Add</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-food-menu"></i>
-                            <div class="text-truncate">Thống kê</div>
-                            <span class="badge badge-center rounded-pill bg-success ms-auto">4</span>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="app-invoice-list.html" class="menu-link">
-                                    <div class="text-truncate" data-i18n="List">List</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="app-invoice-preview.html" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Preview">Preview</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="app-invoice-edit.html" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Edit">Edit</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="app-invoice-add.html" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Add">Add</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- Thông tin -->
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">thông tin sinh viên</span>
-                    </li>
-                    <li class="menu-item@(currentPage == "/account" ? " active" : "")">
-                        <a href="/account" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-user"></i>
-                            <div class="text-truncate">Tài khoản</div>
-                        </a>
-                    </li>
-                    <li class="menu-item@(currentPage.StartsWith("/assignment") ? " active open" : "")">
-                        <a href="/assignment" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-check-shield"></i>
-                            <div class="text-truncate">Phân quyền</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item@(currentPage == "/assignment/roles" ? " active" : "")">
-                                <a asp-area="Admin" asp-controller="Assignment" asp-action="Roles" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Roles">Roles</div>
-                                </a>
-                            </li>
-                            <li class="menu-item@(currentPage == "/assignment/permission" ? " active" : "")">
-                                <a asp-area="Admin" asp-controller="Assignment" asp-action="Permission" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Permission">Permission</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- Khu vực Quản trị - Chức năng -->
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">khu vực quản trị</span>
-                    </li>
-                    <li class="menu-item@(currentPage == "/settings" ? " active" : "")">
-                        <a href="/settings" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-menu"></i>
-                            <div class="text-truncate">Quản lý chức năng</div>
-                        </a>
-                    </li>
-                    <li class="menu-item@(currentPage.StartsWith("/faculities") ? " active open" : "")">
-                        <a href="/faculities" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-check-shield"></i>
-                            <div class="text-truncate">Khoa - Ngành</div>
-                        </a>
-                        <ul class="menu-sub">
-                            <li class="menu-item@(currentPage == "/faculities/faculities" ? " active" : "")">
-                                <a asp-area="Faculities" asp-page="Faculities" class="menu-link">
-                                    <div class="text-truncate">Khoa</div>
-                                </a>
-                            </li>
-                            <li class="menu-item@(currentPage == "/faculities/branches" ? " active" : "")">
-                                <a asp-area="Faculities"  asp-page="Branches" class="menu-link">
-                                    <div class="text-truncate">Ngành</div>
-                                </a>
-                            </li>
-                            <li class="menu-item@(currentPage == "/faculities/majors" ? " active" : "")">
-                                <a asp-area="Faculities" asp-page="Majors" class="menu-link">
-                                    <div class="text-truncate">Chuyên ngành</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- Misc -->
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text" data-i18n="misc">Misc</span>
-                    </li>
-                    <li class="menu-item">
-                        <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-file"></i>
-                            <div class="text-truncate" data-i18n="Documentation">Documentation</div>
-                        </a>
-                    </li>
-                </ul>
-            </aside>
+            <partial name="_AsidePartial" />
             <div class="layout-page">
                 <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
                      id="layout-navbar">
@@ -255,22 +87,21 @@
         </div>
         <div class="layout-overlay layout-menu-toggle"></div>
     </div>
-
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
     <script src="~/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="~/assets/vendor/libs/popper/popper.js"></script>
     <script src="~/assets/vendor/js/bootstrap.js"></script>
     <script src="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../../assets/vendor/libs/typeahead-js/typeahead.js"></script>
+    <script src="~/assets/vendor/libs/hammer/hammer.js"></script>
     <script src="~/assets/vendor/js/menu.js"></script>
-    <script src="~/assets/vendor/libs/select2/select2.js"></script>
-    <script src="~/assets/vendor/libs/moment/moment.js"></script>
-    <script src="~/assets/vendor/libs/flatpickr/flatpickr.js"></script>
-    <script src="~/assets/vendor/libs/quill/katex.js"></script>
-    <script src="~/assets/vendor/libs/quill/quill.js"></script>
-    <script src="~/assets/vendor/libs/toastr/toastr.min.js"></script>
-    <script src="~/assets/vendor/libs/sweetalert2/sweetalert2.all.min.js"></script>
+    <!-- endbuild -->
     <!-- Main JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <script src="~/assets/js/main.js"></script>
+    <script defer src="~/assets/js/app-aside-menu.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+    
 </body>
 </html>
