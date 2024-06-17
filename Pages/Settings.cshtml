@@ -4,12 +4,6 @@
     ViewData["Title"] = "Quản lý chức năng";
     Layout = "_Layout";
 }
-@* Version: jsTree - 3.3.16 *@
-
-@section Heads {
-    <link rel="stylesheet" href="~/assets/vendor/libs/jstree/jstree.css">
-}
-
 <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb breadcrumb-style1 mb-0">
         <li class="breadcrumb-item">
@@ -19,22 +13,147 @@
     </ol>
 </nav>
 
-<div class="card mb-4">
-    <h5 class="card-header">Danh sách chức năng</h5>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="col-4">
+            <div class="input-group input-group-merge">
+                <span class="input-group-text" id="basic-addon-search31"><i class="bx bx-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search..." aria-label="Search..." aria-describedby="basic-addon-search31">
+            </div>
+        </div>
+        <div class="d-flex gap-3">
+            <button type="button" class="btn btn-outline-reddit" data-bs-toggle="modal" data-bs-target="#addMenuModal" disabled>
+                <i class='bx bx-message-square-minus me-1'></i>Xóa
+            </button>
+            <button type="button" class="btn btn-label-linkedin" data-bs-toggle="modal" data-bs-target="#addMenuModal">
+                <i class='bx bx-message-square-add me-1'></i>Thêm mới
+            </button>
+        </div>
+    </div>
     <div class="card-body">
-        <details id="listurl">
-            <summary>Trang chủ</summary>
-        </details>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr class="text-center">
+                        <th class="w-px-50"><input class="form-check-input" style="width: 18px; height: 18px;" type="checkbox" id="selectAll"></th>
+                        <th>Tên chức năng</th>
+                        <th>Địa chỉ URL</th>
+                        <th class="w-px-50">Thứ tự</th>
+                        <th>Vai trò</th>
+                        <th class="w-px-50">Trạng thái</th>
+                        <th class="w-px-50">Sự kiện</th>
+                    </tr>
+                </thead>
+                <tbody id="listUrl"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@* Modal *@
+<div class="modal fade" id="addMenuModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <form class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMenuModalTitle">Khai báo chức năng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="textMenu" class="form-label">Tên chức năng</label>
+                        <input type="text" id="textMenu" class="form-control" placeholder="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="urlMenu" class="form-label">Đường dẫn</label>
+                        <input type="text" id="urlMenu" class="form-control" placeholder="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="roles" class="form-label">Danh sách quyền được phép truy cập</label>
+                        <input type="text" id="roles" class="form-control" placeholder="">
+                    </div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col">
+                        <label for="order" class="form-label">Vị trí</label>
+                        <input type="number" id="order" class="form-control" placeholder="">
+                    </div>
+                    <div class="col">
+                        <label for="icon" class="form-label">Biểu tượng</label>
+                        <input type="text" id="icon" class="form-control">
+                    </div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col">
+                        <label for="order" class="form-label">Tùy chọn danh mục cha & con</label>
+                        <div class="col">
+                            <input class="form-check-input" type="checkbox" value="" id="subMenu">
+                            <label class="form-check-label" for="subMenu">
+                                Đặt làm chức năng con
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label for="order" class="form-label">Tùy chọn hiển thị</label>
+                        <div class="col">
+                            <input class="form-check-input" type="checkbox" value="" id="isActive" checked="">
+                            <label class="form-check-label" for="isActive">
+                                Kích hoạt
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6" id="renderParentId" hidden>
+                        <label for="parentId" class="form-label">Thuộc chức năng cha</label>
+                        <select id="parentId" class="form-select">
+                            <option>Default select</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="addMenu()">Thêm danh mục</button>
+            </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/assets/vendor/libs/jstree/jstree.js"></script>
     <script>
         $(document).ready(function () {
             renderListUrl();
+            
         });
 
+        function renderItem(c) {
+            return `<tr>
+                        <td class="text-center"><input class="form-check-input" type="checkbox" id="selectItem"></td>
+                        <td>${c.level === 1 ? '|-- ' : '|--|-- '} ${c.text}</td>
+                        <td>${c.url}</td>
+                        <td class="text-center">${c.level === 1 ? c.order : c.level + '.' + c.order}</td>
+                        <td>${c.roles}</td>
+                        <td class="text-center">
+                            <span class="badge bg-label-${c.isActive ? 'primary' : 'danger'}">${c.isActive ? 'Kích hoạt' : 'Không kích hoạt'}</span></td>
+                        <td class="text-center"><div class="dropdown">
+                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-dots-vertical-rounded"></i></button>
+                          <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Delete</a>
+                          </div>
+                        </div>
+                        </td>
+                        </tr>`;
+        }
         function renderListUrl() {
             $.ajax({
                 url: 'http://192.168.98.60:8080/api/settings',
@@ -42,24 +161,20 @@
                 success: function (result) {
                     if (result.errorCode === 200) {
                         if (result.data.items.length > 0) {
-                            result.data.items.forEach((item, index) => {
-                                // Tạo thẻ details cho mục cha
-                                $('#listurl').append(`
-                                    <details id="listurl${index}" class="ps-4">
-                                        <summary>${item.text}</summary>
-                                    </details>`);
-
-                                // Kiểm tra và thêm các mục con
-                                if (item.childrensMenus && item.childrensMenus.length > 0) {
-                                    item.childrensMenus.forEach((u, i) => {
-                                        $('#listurl' + index).append(`
-                                            <details class="ps-4">
-                                                <summary>${u.text}</summary>
-                                            </details>`);
-                                    });
+                            console.log(result.data.items)
+                            $('#listUrl').empty();
+                            result.data.items.map((item, index) => {
+                                var t = renderItem(item);
+                                $('#listUrl').append(t);
+                                if(item.children.length > 0){
+                                    item.children.map((c, i) => {
+                                        var tt = renderItem(c);
+                                        $('#listUrl').append(tt);
+                                    })
                                 }
                             });
-                        } else {
+                        }
+                        else {
                             $('#listurl').append(`<span>No URL</span>`);
                         }
                     }
@@ -70,5 +185,54 @@
             });
         }
 
+        //nếu subMenu được check thì hiển thị parentId
+        $('#subMenu').change(function () {
+            if (this.checked) {
+                $('#renderParentId').attr('hidden', false)
+            } else {
+                $('#renderParentId').attr('hidden', true)
+            }
+        });
+
+        function addMenu() {
+            var text = $('#textMenu').val();
+            var url = $('#urlMenu').val();
+            var order = $('#order').val();
+            var roles = $('#roles').val();
+            var icon = $('#icon').val();
+            var subMenu = $('#subMenu').is(':checked');
+            var parentId = subMenu ? $('#parentId').val() : null;
+            var isActive = $('#isActive').is(':checked');
+
+            var data = JSON.stringify({
+                "text": text,
+                "url": url,
+                "order": order,
+                "icon": icon,
+                "isSubMenu": subMenu,
+                "parentId": parentId,
+                "roles": roles
+            });
+
+            $.ajax({
+                url: 'http://192.168.98.60:8080/api/settings',
+                type: 'POST',
+                processData: false,
+                contentType: 'application/json',
+                data: data,
+                success: function (result) {
+                    console.log(result)
+                    if (result.errorCode === 201) {
+                        $('#addMenuModal').modal('hide');
+                        toastr.success('Thêm chức năng thành công');
+                        renderListUrl()
+                        renderAsideMenu()
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
     </script>
 }
