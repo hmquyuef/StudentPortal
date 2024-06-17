@@ -78,21 +78,27 @@
                         <input type="text" id="roles" class="form-control" placeholder="">
                     </div>
                 </div>
-                <div class="row g-2 mb-3">
-                    <div class="col">
-                        <label for="order" class="form-label">Vị trí</label>
-                        <input type="number" id="order" class="form-control" placeholder="">
-                    </div>
-                    <div class="col">
+                <div class="row">
+                    <div class="col mb-3">
                         <label for="icon" class="form-label">Biểu tượng</label>
                         <input type="text" id="icon" class="form-control">
                     </div>
                 </div>
-                <div class="row g-2 mb-3">
+                <div class="row g-3 mb-3">
+                    <div class="col">
+                        <label for="level" class="form-label">Cấp độ</label>
+                        <input type="number" id="level" class="form-control">
+                    </div>
+                    <div class="col">
+                        <label for="order" class="form-label">Vị trí</label>
+                        <input type="number" id="order" class="form-control" placeholder="">
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
                     <div class="col">
                         <label for="order" class="form-label">Tùy chọn danh mục cha & con</label>
                         <div class="col">
-                            <input class="form-check-input" type="checkbox" value="" id="subMenu">
+                            <input class="form-check-input" type="checkbox" id="subMenu">
                             <label class="form-check-label" for="subMenu">
                                 Đặt làm chức năng con
                             </label>
@@ -101,7 +107,7 @@
                     <div class="col">
                         <label for="order" class="form-label">Tùy chọn hiển thị</label>
                         <div class="col">
-                            <input class="form-check-input" type="checkbox" value="" id="isActive" checked="">
+                            <input class="form-check-input" type="checkbox" id="isActive">
                             <label class="form-check-label" for="isActive">
                                 Kích hoạt
                             </label>
@@ -132,15 +138,14 @@
     <script>
         $(document).ready(function () {
             renderListUrl();
-            
         });
 
-        function renderItem(c) {
+        function renderItem(c,u,l) {
             return `<tr>
                         <td class="text-center"><input class="form-check-input" type="checkbox" id="selectItem"></td>
-                        <td>${c.level === 1 ? '|-- ' : '|--|-- '} ${c.text}</td>
-                        <td>${c.url}</td>
-                        <td class="text-center">${c.level === 1 ? c.order : c.level + '.' + c.order}</td>
+                        <td class="${c.level === 1 ? '' : 'ps-5'}"><i class="${c.icon}"></i> ${c.text}</td>
+                        <td class="${c.level === 1 ? '' : 'ps-5'}">${c.level === 1 ? ('/' +  c.url) : ('/' + u + '/' + c.url)}</td>
+                        <td class="text-center">${c.level === 1 ? c.order : (l + '.' + c.order)}</td>
                         <td>${c.roles}</td>
                         <td class="text-center">
                             <span class="badge bg-label-${c.isActive ? 'primary' : 'danger'}">${c.isActive ? 'Kích hoạt' : 'Không kích hoạt'}</span></td>
@@ -152,30 +157,35 @@
                           </div>
                         </div>
                         </td>
-                        </tr>`;
+                    </tr>`;
         }
+
         function renderListUrl() {
             $.ajax({
-                url: 'http://192.168.98.60:8080/api/settings',
+                // url: 'http://192.168.98.60:8080/api/settings',
+                url: 'http://localhost:5007/api/settings',
                 type: 'GET',
                 success: function (result) {
                     if (result.errorCode === 200) {
                         if (result.data.items.length > 0) {
                             console.log(result.data.items)
                             $('#listUrl').empty();
+                            $('#parentId').empty();
                             result.data.items.map((item, index) => {
                                 var t = renderItem(item);
+                                $('#parentId').append(`<option value="${item.id}"><i class="${item.icon}"></i> ${item.text}</option>`);
                                 $('#listUrl').append(t);
                                 if(item.children.length > 0){
                                     item.children.map((c, i) => {
-                                        var tt = renderItem(c);
+                                        var tt = renderItem(c,item.url,item.level);
                                         $('#listUrl').append(tt);
+                                        $('#parentId').append(`<option value="${c.id}"><i class="${c.icon}"></i> ${c.text}</option>`);
                                     })
                                 }
                             });
                         }
                         else {
-                            $('#listurl').append(`<span>No URL</span>`);
+                            $('#listUrl').append(`<tr class="text-center"><td colspan="7">No Data</td></tr>`);
                         }
                     }
                 },
@@ -197,6 +207,7 @@
         function addMenu() {
             var text = $('#textMenu').val();
             var url = $('#urlMenu').val();
+            var level = $('#level').val();
             var order = $('#order').val();
             var roles = $('#roles').val();
             var icon = $('#icon').val();
@@ -207,15 +218,18 @@
             var data = JSON.stringify({
                 "text": text,
                 "url": url,
+                "level": level,
                 "order": order,
                 "icon": icon,
                 "isSubMenu": subMenu,
+                "isActive": isActive,
                 "parentId": parentId,
                 "roles": roles
             });
 
             $.ajax({
-                url: 'http://192.168.98.60:8080/api/settings',
+                // url: 'http://192.168.98.60:8080/api/settings',
+                url: 'http://localhost:5007/api/settings',
                 type: 'POST',
                 processData: false,
                 contentType: 'application/json',

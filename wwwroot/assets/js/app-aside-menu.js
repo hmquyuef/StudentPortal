@@ -21,7 +21,8 @@
 function renderAsideMenu() {
     $("#loadUrl").empty();
     $.ajax({
-        url: 'http://192.168.98.60:8080/api/settings',
+        url: 'http://localhost:5007/api/settings',
+        //url: 'http://192.168.98.60:8080/api/settings',
         type: 'GET',
         success: function (result) {
             console.log("MENU URL: ", result.data.items)
