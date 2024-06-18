@@ -1,5 +1,4 @@
 ﻿@page
-@model StudentPortal.Pages.SettingsModel
 @{
     ViewData["Title"] = "Quản lý chức năng";
     Layout = "_Layout";
@@ -22,26 +21,25 @@
             </div>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" class="btn btn-outline-reddit" data-bs-toggle="modal" data-bs-target="#addMenuModal" disabled>
+            <button type="button" id="btnRemove" class="btn btn-outline-reddit" onclick="removeAll()" disabled>
                 <i class='bx bx-message-square-minus me-1'></i>Xóa
             </button>
-            <button type="button" class="btn btn-label-linkedin" data-bs-toggle="modal" data-bs-target="#addMenuModal">
+            <button type="button" id="benAdd" class="btn btn-label-linkedin" data-bs-toggle="modal" data-bs-target="#addMenuModal">
                 <i class='bx bx-message-square-add me-1'></i>Thêm mới
             </button>
         </div>
     </div>
     <div class="card-body">
         <div class="table-responsive text-nowrap">
-            <table class="table table-sm table-bordered">
+            <table class="table table-sm">
                 <thead>
-                    <tr class="text-center">
-                        <th class="w-px-50"><input class="form-check-input" style="width: 18px; height: 18px;" type="checkbox" id="selectAll"></th>
+                    <tr>
+                        <th class="w-px-50 text-center"><input class="form-check-input" style="width: 18px; height: 18px;" type="checkbox" id="selectAll"></th>
                         <th>Tên chức năng</th>
                         <th>Địa chỉ URL</th>
-                        <th class="w-px-50">Thứ tự</th>
-                        <th>Vai trò</th>
-                        <th class="w-px-50">Trạng thái</th>
-                        <th class="w-px-50">Sự kiện</th>
+                        <th class="w-px-50 text-center">Thứ tự</th>
+                        <th class="text-center">Vai trò</th>
+                        <th class="w-px-50 text-center">Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody id="listUrl"></tbody>
@@ -54,7 +52,7 @@
 @* Modal *@
 <div class="modal fade" id="addMenuModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
-        <form class="modal-content">
+        <form class="modal-content" id="addMenuForm">
             <div class="modal-header">
                 <h5 class="modal-title" id="addMenuModalTitle">Khai báo chức năng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -117,12 +115,7 @@
                 <div class="row">
                     <div class="col-6" id="renderParentId" hidden>
                         <label for="parentId" class="form-label">Thuộc chức năng cha</label>
-                        <select id="parentId" class="form-select">
-                            <option>Default select</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </select>
+                        <select id="parentId" class="form-select"></select>
                     </div>
                 </div>
             </div>
@@ -140,48 +133,32 @@
             renderListUrl();
         });
 
-        function renderItem(c,u,l) {
+        function renderItem(c) {
             return `<tr>
-                        <td class="text-center"><input class="form-check-input" type="checkbox" id="selectItem"></td>
-                        <td class="${c.level === 1 ? '' : 'ps-5'}"><i class="${c.icon}"></i> ${c.text}</td>
-                        <td class="${c.level === 1 ? '' : 'ps-5'}">${c.level === 1 ? ('/' +  c.url) : ('/' + u + '/' + c.url)}</td>
-                        <td class="text-center">${c.level === 1 ? c.order : (l + '.' + c.order)}</td>
-                        <td>${c.roles}</td>
+                        <td class="text-center"><input class="form-check-input" type="checkbox" id="selectItem${c.id}"></td>
+                        <td>${c.level === 1 ? '' : `<i class='ps-1 bx bx-subdirectory-right'></i>`} ${c.icon} ${c.text}</td>
+                        <td class="${c.level === 1 ? '' : 'ps-5'}">${c.level === 1 ? ('/' + c.url) : ('.. /' + c.url)}</td>
+                        <td class="text-center">${c.order}</td>
+                        <td class="text-center">${c.roles}</td>
                         <td class="text-center">
-                            <span class="badge bg-label-${c.isActive ? 'primary' : 'danger'}">${c.isActive ? 'Kích hoạt' : 'Không kích hoạt'}</span></td>
-                        <td class="text-center"><div class="dropdown">
-                          <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false"><i class="bx bx-dots-vertical-rounded"></i></button>
-                          <div class="dropdown-menu" style="">
-                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Delete</a>
-                          </div>
-                        </div>
+                            <span class="badge bg-label-${c.isActive ? 'primary' : 'danger'}">${c.isActive ? 'Kích hoạt' : 'Không kích hoạt'}</span>
                         </td>
                     </tr>`;
         }
 
         function renderListUrl() {
             $.ajax({
-                // url: 'http://192.168.98.60:8080/api/settings',
-                url: 'http://localhost:5007/api/settings',
+                url: 'http://192.168.98.60:8080/api/settings',
                 type: 'GET',
                 success: function (result) {
                     if (result.errorCode === 200) {
+                        $('#listUrl').empty();
+                        $('#parentId').empty();
                         if (result.data.items.length > 0) {
-                            console.log(result.data.items)
-                            $('#listUrl').empty();
-                            $('#parentId').empty();
                             result.data.items.map((item, index) => {
                                 var t = renderItem(item);
                                 $('#parentId').append(`<option value="${item.id}"><i class="${item.icon}"></i> ${item.text}</option>`);
                                 $('#listUrl').append(t);
-                                if(item.children.length > 0){
-                                    item.children.map((c, i) => {
-                                        var tt = renderItem(c,item.url,item.level);
-                                        $('#listUrl').append(tt);
-                                        $('#parentId').append(`<option value="${c.id}"><i class="${c.icon}"></i> ${c.text}</option>`);
-                                    })
-                                }
                             });
                         }
                         else {
@@ -205,40 +182,27 @@
         });
 
         function addMenu() {
-            var text = $('#textMenu').val();
-            var url = $('#urlMenu').val();
-            var level = $('#level').val();
-            var order = $('#order').val();
-            var roles = $('#roles').val();
-            var icon = $('#icon').val();
-            var subMenu = $('#subMenu').is(':checked');
-            var parentId = subMenu ? $('#parentId').val() : null;
-            var isActive = $('#isActive').is(':checked');
-
-            var data = JSON.stringify({
-                "text": text,
-                "url": url,
-                "level": level,
-                "order": order,
-                "icon": icon,
-                "isSubMenu": subMenu,
-                "isActive": isActive,
-                "parentId": parentId,
-                "roles": roles
-            });
-
+            var data = {
+                Text: $('#textMenu').val(),
+                Url: $('#urlMenu').val(),
+                icon: $('#icon').val(),
+                Level: $('#level').val(),
+                Order: $('#order').val(),
+                Roles: $('#roles').val(),
+                IsSubMenu: $('#subMenu').is(':checked'),
+                IsActive: $('#isActive').is(':checked'),
+                ParentId: $('#parentId').val()
+            }
             $.ajax({
-                // url: 'http://192.168.98.60:8080/api/settings',
-                url: 'http://localhost:5007/api/settings',
+                url: 'http://192.168.98.60:8080/api/settings',
                 type: 'POST',
                 processData: false,
                 contentType: 'application/json',
-                data: data,
+                data: JSON.stringify(data),
                 success: function (result) {
-                    console.log(result)
                     if (result.errorCode === 201) {
                         $('#addMenuModal').modal('hide');
-                        toastr.success('Thêm chức năng thành công');
+                        toastr.success(`Thêm chức năng thành công`);
                         renderListUrl()
                         renderAsideMenu()
                     }
@@ -247,6 +211,73 @@
                     console.log(error);
                 }
             });
+        }
+
+        $('#listUrl').on('change', 'input[type="checkbox"][id^="selectItem"]', function () {
+            // Check if any selectItem checkbox is checked
+            if ($('#listUrl input[type="checkbox"][id^="selectItem"]:checked').length > 0) {
+                $('#selectAll').prop('checked', true);
+                $('#btnRemove').prop('disabled', false);
+            } else {
+                $('#selectAll').prop('checked', false);
+                $('#btnRemove').prop('disabled', true);
+            }
+        });
+        $('#selectAll').on('change', function () {
+            $('#listUrl input[type="checkbox"][id^="selectItem"]').prop('checked', this.checked);
+            //if selectAll is checked then remove disabled for id=btnRemove
+            if (this.checked) {
+                $('#btnRemove').prop('disabled', false);
+            } else {
+                $('#btnRemove').prop('disabled', true);
+            }
+        });
+
+        function removeAll() {
+            var ids = [];
+            $('#listUrl input[type="checkbox"][id^="selectItem"]:checked').each(function () {
+                ids.push($(this).attr('id').replace('selectItem', ''));
+            });
+            $.ajax({
+                url: 'http://192.168.98.60:8080/api/settings',
+                type: 'DELETE',
+                contentType: 'application/json',
+                processData: false,
+                data: JSON.stringify(ids),
+                success: function (result) {
+                    if (result.errorCode === 204) {
+                        toastr.success(`Xóa thành công ${ids.length} chức năng`);
+                        $('#selectAll').prop('checked', false);
+                        renderListUrl();
+                        renderAsideMenu();
+                    }
+                },
+            });
+        }
+
+        $('#textMenu').on('input', function () {
+            var textMenuValue = $(this).val();
+            var slug = convertToSlug(textMenuValue);
+            $('#urlMenu').val(slug);
+        });
+
+        function removeDiacritics(str) {
+            var from = "àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ";
+            var to = "aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd";
+            for (var i = 0, l = from.length; i < l; i++) {
+                str = str.replace(new RegExp(from[i], "gi"), to[i]);
+            }
+            return str;
+        }
+
+        // Function to convert text to slug
+        function convertToSlug(text) {
+            text = removeDiacritics(text);
+            return text.toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim();
         }
     </script>
 }

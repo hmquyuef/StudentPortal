@@ -21,42 +21,46 @@
 function renderAsideMenu() {
     $("#loadUrl").empty();
     $.ajax({
-        url: 'http://localhost:5007/api/settings',
-        //url: 'http://192.168.98.60:8080/api/settings',
+        url: 'http://192.168.98.60:8080/api/settings',
         type: 'GET',
         success: function (result) {
-            console.log("MENU URL: ", result.data.items)
-            if (result.data.items.length > 0) {
-                result.data.items.map((item, index) => {
-                    if (item.children.length > 0) {
-                        //get current page url
-                        var currentPage = window.location.pathname;
-                        console.log(currentPage)
-                        $("#loadUrl").append(`
-                            <li class="menu-item ${currentPage === item.url ? 'active open' : ''}" id="${item.id}">
-                                <a href="${item.url}" class="menu-link menu-toggle">
-                                    <i class="menu-icon tf-icons ${item.icon}"></i>
-                                    <div class="text-truncate">${item.text}</div>
-                                </a>
-                            </li>`);
-                        item.children.map((child, index) => {
-                            $("#" + item.id).append(`
-                                <ul class="menu-sub">
-                                    <li class="menu-item ${currentPage === (item.url + child.url) ? 'active' : ''}">
-                                        <a href="${item.url + child.url}" class="menu-link">
-                                            <div class="text-truncate">${child.text}</div>
-                                        </a>
-                                    </li>
-                                </ul>`);
-                        });
-                    } else {
-                        $("#loadUrl").append(`
-                            <li class="menu-item ${currentPage === item.url ? 'active' : ''}">
-                                <a href="${item.url}" class="menu-link">
-                                    <i class="menu-icon tf-icons ${item.icon}"></i>
-                                    <div class="text-truncate">${item.text}</div>
-                                </a>
-                            </li>`);
+            var items = result.data.items;
+            var current = window.location.pathname;
+            console.log(current);
+            if (items.length > 0) {
+                items.map((r, i) => {
+                    console.log("ITEM: ", r)
+                    if (!r.isSubMenu) {
+                        var child = items.filter(x => x.parentId === r.id);
+                        if (child.length > 0) {
+                            $("#loadUrl").append(`
+                                <li class="menu-item ${current === ('/' + r.url) ? 'active open' : ''}" id="${r.id}">
+                                    <a href="${r.url}" class="menu-link menu-toggle">
+                                        <i class="menu-icon tf-icons ${r.contextIcon}"></i>
+                                        <div class="text-truncate">${r.text}</div>
+                                    </a>
+                                    <ul class="menu-sub">
+                                        ${child.map((c, j) => {
+                                        return `<li class="menu-item ${current === ('/' + r.url) ? 'active open' : ''}" id="${c.id}">
+                                                    <a href="${c.url}" class="menu-link">
+                                                        <i class="menu-icon tf-icons ${c.contextIcon}"></i>
+                                                        <div class="text-truncate">${c.text}</div>
+                                                    </a>
+                                                </li>`
+                                        }).join('')}
+                                    </ul>
+                                </li>`);
+                        }
+                        else {
+                            $("#loadUrl").append(`
+                                <li class="menu-item ${current === ('/' + r.url) ? 'active' : ''}" id="${r.id}">
+                                    <a href="${r.url}" class="menu-link">
+                                        <i class="menu-icon tf-icons ${r.contextIcon}"></i>
+                                        <div class="text-truncate">${r.text}</div>
+                                    </a>
+                                </li>`);
+                        
+                        }
                     }
                 });
             }
